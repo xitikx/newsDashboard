@@ -20,10 +20,17 @@ pipeline {
     }
 
     stage('Run Fetcher Container') {
-      steps {
-        bat 'docker run --rm -v %cd%\\frontend:/app/news-fetcher/frontend news-fetcher'
-      }
-    }
+  steps {
+    bat '''
+      docker run --rm ^
+        -e NEWS_API_KEY=39cb553effd2496ca94999765f343633 ^
+        -e COUNTRY=in ^
+        -e CATEGORY=technology ^
+        -v %cd%\\frontend:/app/news-fetcher/frontend ^
+        news-fetcher
+    '''
+  }
+}
 
     stage('Archive News JSON') {
       steps {

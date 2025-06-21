@@ -1,7 +1,11 @@
 const fs = require("fs");
 const axios = require("axios");
 const path = require("path");
-const config = require("./config.json");
+const config = {
+  apiKey: process.env.NEWS_API_KEY,
+  country: process.env.COUNTRY || 'us',
+  category: process.env.CATEGORY || 'technology',
+};
 
 async function getNews() {
   const url = `https://newsapi.org/v2/everything?q=technology&sortBy=publishedAt&language=en&apiKey=${config.apiKey}`;
