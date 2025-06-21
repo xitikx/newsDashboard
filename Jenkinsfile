@@ -21,7 +21,7 @@ pipeline {
 
     stage('Run Fetcher Container') {
       steps {
-        sh 'docker run -v $WORKSPACE/frontend:/app/frontend news-fetcher'
+        bat 'docker run --rm -v %cd%\\frontend:/app/news-fetcher/frontend news-fetcher'
       }
     }
 
