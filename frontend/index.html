@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Daily News</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    h1 { font-size: 2rem; color: #333; }
+    .article { margin-bottom: 1.5rem; }
+    .article a { text-decoration: none; font-size: 1.2rem; color: navy; font-weight: bold; }
+    .article p { margin: 0.3rem 0; color: #555; }
+  </style>
+</head>
+<body>
+  <h1>Latest News</h1>
+  <div id="news"></div>
+
+  <script>
+    fetch("news.json")
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("news");
+        data.forEach(article => {
+          const div = document.createElement("div");
+          div.classList.add("article");
+          div.innerHTML = `
+            <a href="${article.url}" target="_blank">${article.title}</a>
+            <p>${article.description || ''} — ${article.source}</p>
+          `;
+          container.appendChild(div);
+        });
+      })
+      .catch(err => {
+        console.error("Failed to load news.json:", err);
+        document.getElementById("news").innerText = "Failed to load news.";
+      });
+  </script>
+</body>
+</html>
