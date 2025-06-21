@@ -15,7 +15,7 @@ pipeline {
 
     stage('Build Docker Image') {
       steps {
-        sh 'docker build -t news-fetcher .'
+        bat 'docker build -t news-fetcher .'
       }
     }
 
