@@ -3,8 +3,6 @@ pipeline {
 
   environment {
     DOCKER_BUILDKIT = 1
-    AWS_ACCESS_KEY_ID = 'your-access-key-id' // Replace with actual key or handle via Jenkins credentials securely
-    AWS_SECRET_ACCESS_KEY = credentials('aws-secret-key') // Use Jenkins credentials ID
   }
 
   stages {
@@ -41,9 +39,19 @@ pipeline {
 
     stage('Upload to S3') {
       steps {
-        bat '''
-          aws s3 cp frontend/news.json s3://news-dashboard-artifacts/news.json --region us-east-1 --acl public-read
-        '''
+        withCredentials([
+          usernamePassword(
+            credentialsId: 'aws-cred',
+            usernameVariable: 'AWS_ACCESS_KEY_ID',
+            passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+          )
+        ]) {
+          bat '''
+            aws configure set aws_access_key_id %AWS_ACCESS_KEY_ID%
+            aws configure set aws_secret_access_key %AWS_SECRET_ACCESS_KEY%
+            aws s3 cp frontend/news.json s3://news-dashboard-artifacts/news.json --region us-east-1 --acl public-read
+          '''
+        }
       }
     }
   }
