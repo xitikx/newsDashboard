@@ -17,9 +17,6 @@ A lightweight, full-stack news dashboard that fetches real-time headlines from t
 - **Frontend**: HTML, CSS, JavaScript
 - **DevOps**: Docker, Jenkins, AWS S3 (Static Hosting), AWS CLI
 
-## 🧱 Project Structure
-
-
 ## ⚙️ CI/CD Pipeline (Jenkins)
 
 1. **Checkout** code from GitHub
