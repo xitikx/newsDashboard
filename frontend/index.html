@@ -1,37 +1,136 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Daily News</title>
+  <meta charset="UTF-8">
+  <title>Tech News Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body { font-family: Arial, sans-serif; margin: 2rem; }
-    h1 { font-size: 2rem; color: #333; }
-    .article { margin-bottom: 1.5rem; }
-    .article a { text-decoration: none; font-size: 1.2rem; color: navy; font-weight: bold; }
-    .article p { margin: 0.3rem 0; color: #555; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f6f8;
+      color: #333;
+    }
+
+    header {
+      background-color: #1e293b;
+      color: #fff;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    header p {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: #cbd5e1;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 10px;
+      padding: 1.2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card h2 {
+      font-size: 1.1rem;
+      margin-bottom: 0.6rem;
+      color: #1e40af;
+    }
+
+    .card h2 a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .card h2 a:hover {
+      text-decoration: underline;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      color: #555;
+      margin-bottom: 0.5rem;
+    }
+
+    .card .meta {
+      font-size: 0.8rem;
+      color: #666;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+    }
+
+    .error {
+      text-align: center;
+      color: red;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-  <h1>Latest News</h1>
-  <div id="news"></div>
+
+  <header>
+    <h1>📰 Tech News Dashboard</h1>
+    <p>Latest curated articles from NewsAPI (auto-updated via Jenkins)</p>
+  </header>
+
+  <div class="container" id="news"></div>
 
   <script>
-    fetch("news.json")
+    const NEWS_URL = "https://news-dashboard-artifacts.s3.amazonaws.com/news.json"; // your public S3 URL
+
+    fetch(NEWS_URL)
       .then(res => res.json())
       .then(data => {
         const container = document.getElementById("news");
-        data.forEach(article => {
-          const div = document.createElement("div");
-          div.classList.add("article");
-          div.innerHTML = `
-            <a href="${article.url}" target="_blank">${article.title}</a>
-            <p>${article.description || ''} — ${article.source}</p>
+
+        data.slice(0, 30).forEach(article => {
+          const card = document.createElement("div");
+          card.className = "card";
+
+          const time = new Date(article.publishedAt).toLocaleString('en-IN', {
+            dateStyle: 'medium',
+            timeStyle: 'short'
+          });
+
+          card.innerHTML = `
+            <h2><a href="${article.url}" target="_blank">${article.title}</a></h2>
+            <p>${article.description || "No description available."}</p>
+            <div class="meta">
+              <span>${article.source?.name || "Unknown Source"}</span>
+              <span>${time}</span>
+            </div>
           `;
-          container.appendChild(div);
+          container.appendChild(card);
         });
       })
       .catch(err => {
-        console.error("Failed to load news.json:", err);
-        document.getElementById("news").innerText = "Failed to load news.";
+        console.error("Failed to load news:", err);
+        document.getElementById("news").innerHTML = `
+          <div class="error">⚠️ Failed to load news. Please try again later.</div>
+        `;
       });
   </script>
 </body>
